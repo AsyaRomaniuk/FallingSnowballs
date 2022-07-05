@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Snow</title>
+	<style>
+		body{
+			background: #424242;
+		}
+		.snow{
+			background-color: snow;
+			border-radius: 50%;
+			position: absolute;
+		}
+	</style>
+</head>
+<body>
+	<script>
+		class Snowball{
+			constructor(cx, cy, r, dx, dy, speed){
+				this.cx = cx;
+				this.cy = cy;
+				this.r = r;
+				this.dx = dx;
+				this.dy = dy;
+				this.speed = speed;
+				this.id = document.createElement("div");
+				this.id.className = "snow";
+				this.id.style.left = cx+"px";
+				this.id.style.top = cy+"px";
+				this.id.style.width = r+"px";
+				this.id.style.height = r+"px";
+				document.body.appendChild(this.id);
+			}
+			move_on_canvas(){
+				this.cx += this.dx*this.speed;
+				this.cy += this.dy*this.speed;
+				this.id.style.left = this.cx+"px";
+				this.id.style.top = this.cy+"px";
+			}
+			remove_child_from_body(){
+				this.id.remove();
+			}
+		}
+		
+		function randint(min, max){
+			return Math.floor(min + Math.random() * (max + 1 - min));
+		}
+		
+		function is_out_of_bounds(cx, cy){
+			if (cx < 0 || cx > W || cy > H) return true;
+			else return false;
+		}
+		
+		function create_snowballs(min_k, max_k, min_r, max_r, min_speed, max_speed){
+			let amount = randint(min_k, max_k);
+			G_snowball_count += amount; //!!!
+			G_txt_snowball_count.innerHTML = G_snowball_count;
+			for (i = 0; i < amount; i++){
+				let r = randint(min_r, max_r);
+				let x = randint(0, W);
+				let y = -r;
+				let dx = (-Math.random())**randint(1, 2);
+				let dy = Math.random();
+				let speed = randint(min_speed, max_speed)
+				G_snowballs.push(new Snowball(x, y, r, dx, dy, speed));
+			}
+		}
+		
+		function move_snowballs(){
+			create_snowballs(0, 10, 1, 15, 5, 25);
+			for (i = 0; i < G_snowballs.length; i++){
+				G_snowballs[i].move_on_canvas();
+				if (is_out_of_bounds(G_snowballs[i].cx, G_snowballs[i].cy)){
+					G_snowballs[i].remove_child_from_body();
+					G_snowballs.splice(i, 1);
+					G_snowball_count--;
+				}
+			}
+			setTimeout(move_snowballs, TIME);
+		}
+		
+		var G_snowball_count = 0; //!!!
+		var G_snowballs = [];
+		const TIME = 10;
+		const W = document.documentElement.clientWidth;
+		const H = document.documentElement.clientHeight;
+		document.body.style.overflow = 'hidden';
+		var G_txt_snowball_count = document.createElement("div"); //!!!
+		G_txt_snowball_count.innerHTML = G_snowball_count; //!!!
+		document.body.appendChild(G_txt_snowball_count); //!!!
+		create_snowballs(0, 10, 1, 15, 5, 25);
+		setTimeout(move_snowballs, TIME);
+	</script>
+</body>
+</html>
